@@ -5,8 +5,10 @@ public class CommunicationStrategyFactory {
         switch (strategy) {
             case S3Video:
                 return new S3VideoStrategy();
+
             case LocalVideo:
                 return new VideoFileStrategy();
+
             case LocalImageFolder:
                 return new ImageFolderStrategy();
 
