@@ -1,6 +1,6 @@
-import communicationStrategy.CommunicationStrategy;
-import communicationStrategy.CommunicationStrategyFactory;
-import communicationStrategy.Strategies;
+
+
+import communicationStrategy.Types;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,12 +11,13 @@ import java.util.ArrayList;
 
 public class InitialFrame extends JFrame implements ActionListener {
     private final static int height = 600, width = 600;
-    private static CommunicationStrategyFactory communicationStrategyFactory = new CommunicationStrategyFactory();
-    private ArrayList<CommunicationStrategy> strategies;
+
+    private JTabbedPane tabbedPane;
+    private JPanel mainPanel;
+    private JPanel historyPanel;
     private JPanel panel;
     private JPanel panel2;
     private JPanel intervalPanel;
-    private JPanel mainPanel;
     private JLabel label;
     private JComboBox comboBox;
     private JButton selectButton;
@@ -34,19 +35,32 @@ public class InitialFrame extends JFrame implements ActionListener {
     }
 
     private void initialize() {
-        this.strategies = new ArrayList<>();
-        //strategies.add(new LocalVideoCommand(this));
         setLocation(100, 100);
         setSize(width, height);
 
         setLayout(new BorderLayout());
         label = new JLabel("Request Type:");
-        comboBox = new JComboBox(Strategies.values());
+        comboBox = new JComboBox(Types.values());
         comboBox.setSelectedIndex(-1);
         selectButton = new JButton("Select");
         selectButton.addActionListener(this);
         comboBox.addActionListener(this);
 
+        tabbedPane = new JTabbedPane();
+
+        createMainPanel();
+
+        tabbedPane.addTab("Create Request", mainPanel);
+
+        add(tabbedPane, BorderLayout.NORTH);
+
+
+        //add(mainPanel, BorderLayout.NORTH);
+        mainPanel.setVisible(true);
+        setVisible(true);
+    }
+
+    private void createMainPanel() {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(0, 1));
         //mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -62,7 +76,7 @@ public class InitialFrame extends JFrame implements ActionListener {
         fileChooser = new JFileChooser();
 
         panel2 = new JPanel();
-        addressLabel = new JLabel("address");
+        addressLabel = new JLabel("Address");
         requestButton = new JButton("Request");
         requestButton.addActionListener(this);
         intervalLabel = new JLabel("Interval");
@@ -82,37 +96,37 @@ public class InitialFrame extends JFrame implements ActionListener {
 
         mainPanel.add(panel2);
         mainPanel.add(intervalPanel);
+    }
 
-
-        add(mainPanel, BorderLayout.NORTH);
-        mainPanel.setVisible(true);
-        setVisible(true);
+    private void createHistoryPanel() {
+        historyPanel = new JPanel();
     }
 
     public JLabel getLabel() {
         return label;
     }
 
+    public String[] getInterval() {
+        String[] interval = { start.getText(), end.getText() };
+
+        return interval;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == selectButton) {
+        if(e.getSource() == requestButton) {
 
-            if(comboBox.getSelectedItem() == Strategies.LocalVideo) {
-                System.out.println("local video combo");
-
-                panel.add(addressLabel);
-                panel.updateUI();
-            }
-
-            System.out.println("action performed");
-            communicationStrategyFactory.getCommunicationStategy((Strategies) comboBox.getSelectedItem());
-
+            panel.add(addressLabel);
+            panel.updateUI();
+            SecondPanel secondPanel = new SecondPanel((Types) comboBox.getSelectedItem(), this);
+            tabbedPane.addTab(secondPanel.getRequestID(), secondPanel);
+            tabbedPane.updateUI();
         }
 
         if(e.getSource() == comboBox) {
-            Strategies strategy = (Strategies) comboBox.getSelectedItem();
+            Types type = (Types) comboBox.getSelectedItem();
             String address = "";
-            switch (strategy) {
+            switch (type) {
                 case LocalVideo:
                     fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
                     fileChooser.showOpenDialog(panel);
