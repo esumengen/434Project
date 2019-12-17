@@ -19,10 +19,8 @@ public class RequestBuilder {
 
         RequestBuilder builder = new RequestBuilder(request);
 
-        for (int i = 0; i < list.length; i += 2){
-            System.out.println(list[i] + "  " + list[i+1]);
+        for (int i = 0; i < list.length; i += 2)
             builder = addValue(list[i].toString(), list[i + 1]);
-        }
 
         return builder;
     }

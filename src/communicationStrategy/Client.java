@@ -27,7 +27,6 @@ public class Client {
 
     public Client(JSONObject request) {
         this.request = request;
-        System.out.println();
 
     }
 
@@ -57,11 +56,10 @@ public class Client {
                 response.append(responseLine.trim());
             }
 
-            br.close();
-
             JSONParser parser = new JSONParser();
             JSONObject responseJSON = (JSONObject) parser.parse(response.toString());
 
+            br.close();
             connection.disconnect();
 
             return responseJSON;
